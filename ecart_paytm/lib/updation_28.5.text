@@ -1,0 +1,282 @@
+import 'dart:convert';
+import 'package:ecart_client1/main.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
+import 'main1.dart';
+
+
+//import 'package:beautiful_list/model/lesson.dart';
+class Cart extends StatefulWidget {   
+  int index,id;
+  final String username;
+   List list;
+         
+  
+      Cart({this.index,this.list,this.username,this.id});
+      
+   var p_img; 
+   
+@override
+  _CartState createState() => new _CartState();
+  //@override
+  _CartDetilsState createState1() => new _CartDetilsState();
+  
+}
+
+ //class Cart extends StatelessWidget{
+class _CartState extends State<Cart> {
+   
+     Future<List> load_cart() async {
+    print('Inside load_cart');
+    //await Future.delayed(Duration(seconds: 2));
+     username = username;
+      print('FLUTTERUSERNAME'+username);
+    final response =
+       await http.get('http://192.168.122.1/ecart/load_cart.php?username=$username');
+       // print(response.statusCode);
+    if (response.statusCode == 200) {
+      print('response.body:' + response.body);
+       await Future.delayed(Duration(seconds: 0));
+      
+      {
+           return json.decode(response.body);
+      }
+      
+    
+   
+    } else {
+      // If that call was not successful, throw an error.
+      throw Exception('Failed to load post');
+    }
+     
+  }
+ 
+  
+  
+  @override
+void initState() {
+     
+      super.initState();
+     
+  }
+       Widget build(BuildContext context) {
+          List list;
+      return Scaffold(
+        appBar: AppBar(title: Text("Cart Details"),),
+
+       
+        body:   //getCurrentFragment() 
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FutureBuilder<List>(
+           
+            future: load_cart(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) print(snapshot.error);
+
+              return snapshot.hasData
+                  ? new ItemList(
+                      list: snapshot.data,
+                      //index: i,
+                     // order_id: snapshot.data,
+                    )
+                  : new Center(
+                      child: new CircularProgressIndicator(),
+                    );
+            },
+                
+                
+          
+          ),
+        ),
+    
+      
+      );
+    }
+  }
+
+  
+ class ItemList extends StatefulWidget {
+      List list;
+      int index; 
+      //final List<String> items;
+ 
+
+    ItemList({this.list});
+
+  @override
+  
+  _ItemListState createState() => _ItemListState();
+
+}
+ 
+class _ItemListState extends State<ItemList>  {
+ 
+ int cart_count;
+
+  int index;
+      String order_id;
+      List itemCount = new List();
+ 
+
+void initState(){
+  itemCount.length=widget.list.length;
+ initializeList();
+}
+   
+void initializeList(){
+ // int zero=0;
+   //final List<int> items= List<int>.generate(widget.list.length, zero); 
+  print('widget.list.length' + widget.list.length.toString());
+ int k;
+ itemCount.length=widget.list.length;
+ for (k=0;k < widget.list.length;k++){
+   itemCount[k]=0;
+   print('itemCount[k]'+ itemCount.toString());
+ }
+}
+
+
+      
+//String id;
+        Future delete_cart(int i)   {
+ var url="http://192.168.122.1/ecart/delete_cart.php";
+ 
+    print('id'+widget.list[i]['id']);
+    print('uname'+username);
+
+     http.post(url, body: {
+ "id" : widget.list[i]['id'],
+"username"  : username
+     });
+  
+        }
+  /* add(int index) {
+  setState(() {
+    widget.list[index].itemCount++;
+   // itemCount[index]++;
+  });
+}
+  minus(int index) {
+  setState(() {
+    if (itemCount != 0) 
+        //widget.list[index].itemCount--;
+        itemCount--;
+  });
+}*/
+  Widget build(BuildContext context) {
+   // final items = List<String>.generate(widget.list.length, (i) => "Item $i");
+      return new ListView.builder(
+                  itemCount: widget.list == null ? 0 : widget.list.length,
+          itemBuilder: (context, i) {
+                   return new Container(  
+                      padding: const EdgeInsets.all(10.0),
+                      child: new GestureDetector(
+                        onTap: () {
+                          print("hai"+i.toString());
+                           Navigator.of(context).push(new MaterialPageRoute(
+                            builder: (BuildContext context) => new Cart(
+                                  list: widget.list,
+                                  index: i,
+                                )));
+                                },
+                      
+                        child: new Card(
+                        
+                          child: new ListTile(
+                           
+                            title: 
+                            new Column(
+                              children: <Widget>[
+                            Text("Product_name : ${widget.list[i]['product_name']}",style: new TextStyle(fontSize: 15.0,color:Colors.blue,fontWeight: FontWeight.bold),),
+                            Text("Product_Price : ${widget.list[i]['product_price']}",style: new TextStyle(fontSize: 15.0,fontWeight: FontWeight.bold),),
+              
+                              ],
+                            ),
+  
+                        leading:
+                                           CircleAvatar(
+                                radius: 20.0,
+                                backgroundImage:
+                                    NetworkImage("http://192.168.122.1/ecart/upload/${widget.list[i]['img_name']}"),
+                                backgroundColor: Colors.transparent,
+                              ),
+                            
+                    
+                           // trailing: new Text("Product_Price : ${widget.list[i]['product_price']}",style: new TextStyle(fontSize: 15.0,fontWeight: FontWeight.bold),),
+                               // order_id = widget.list[widget.index]['order_id'];
+
+                 subtitle  :   
+    new Row(
+        children: <Widget>[
+        itemCount[i] != 0 ? new IconButton(icon: new Icon(Icons.remove),onPressed: ()=>setState(()=>itemCount[i]--),) : new IconButton(icon: new Icon(Icons.remove_shopping_cart),onPressed: (){},),
+              //new IconButton(icon: new Icon(Icons.remove),onPressed: ()=>setState(()=>itemCount[i]--),),
+ 
+       // new Container(),
+        //Text('${itemCount[i]}'),
+        
+         // new Text(itemCount[i].toString()),runtimeType
+         //new Text(i.toString()),
+         //new Text('${widget.list.itemCount[i]}'),
+         // new Text(itemCount[i].toString()),
+                  // new Text("Vijay"),
+           new IconButton(icon: new Icon(Icons.add),onPressed: ()=>setState(()=>itemCount[i]++),), 
+           
+            /* new FloatingActionButton(
+              onPressed: add(index),
+              child: new Icon(Icons.add, color: Colors.black,),
+              backgroundColor: Colors.white,),
+
+             //new Text('$itemCount',
+                //style: new TextStyle(fontSize: 60.0)),text('${_productSearchResult[i].counter}',
+
+             new Text('${widget.list[i].itemCount}',
+                 style: new TextStyle(fontSize: 20.0)),
+
+            new FloatingActionButton(
+              onPressed: minus(index),
+              child: new Icon(
+               const IconData(0xe15b, fontFamily: 'MaterialIcons'),
+                 color: Colors.black),
+              backgroundColor: Colors.white,), */
+        InkResponse(
+                         
+                     child:                       
+                      Icon(Icons.delete_outline,color: Colors.red,),
+                      onTap: (){         
+                          delete_cart(i);
+                     },
+              )
+        ],
+      ),
+ 
+                ),
+               
+              ),
+
+            ),
+          
+          );  
+         // );
+        },
+        
+       
+      );
+    }
+
+   
+}
+ 
+  class _CartDetilsState extends State<Cart> {
+  @override
+  Widget build(BuildContext context) {
+     
+    return Scaffold(
+      body: new Container(
+
+      ),
+
+    );
+  }
+  }

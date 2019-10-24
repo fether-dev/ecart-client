@@ -1,0 +1,292 @@
+import 'package:flutter/material.dart';
+
+class Firstpage extends StatefulWidget{
+Firstpage({this.username});
+final String username;
+      @override
+      _FirstpageState createState() {
+       return _FirstpageState();
+      }
+       
+      
+    }
+   
+    class Men extends StatelessWidget {
+Men({this.username});
+final String username;
+  @override
+  Widget build(BuildContext context) {
+       return MaterialApp( 
+      home: Scaffold(
+        // appBar: AppBar(title: Text("Welcome Admin"),),
+              body: Container(
+                 padding: const EdgeInsets.all(20.0),
+// child: new SingleChildScrollView(
+      child:new Column(
+      //  Text('Hallo $username', style: TextStyle(fontSize: 20.0),),
+       mainAxisSize: MainAxisSize.max,
+       mainAxisAlignment: MainAxisAlignment.start,
+       
+              children: <Widget>[
+                    Text('Hai $username', style: TextStyle(fontSize: 20.0),),
+                   /* Text("Welcome to E-Cart",textDirection: TextDirection.ltr, style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold,
+                                 color: Colors.black,),), 
+                                 SizedBox(
+                  height: 20.0,
+      ),*/
+                 Text("Welcome to Mens section",textDirection: TextDirection.ltr, style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold,
+                                 color: Colors.black,),), 
+            //  Image.asset("asset/men1.jpg", ),
+               SizedBox(
+                  height: 20.0,
+               ),/*FlatButton(
+                  child: Text('CANCEL'),
+                  shape: BeveledRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                  ),
+                  onPressed: () {
+                  controlleruid.clear();
+                  controllerpass.clear();
+                  },
+                ), */
+                   RaisedButton(
+                     
+                     shape: BeveledRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                  ),
+            child: Text("Logout"),
+            color: Colors.blueAccent,
+            onPressed: (){
+              Navigator.pushReplacementNamed(context,'/MyHomePage');
+            },
+          ),          //  Image.asset("asset/men2.jpg", ),
+     
+              ],
+             
+      
+      ),
+    
+      // ),
+       ),
+	   
+    //new Text("Welcome Mens Section",textDirection: TextDirection.ltr, style: new TextStyle(fontSize: 18.0,fontWeight: FontWeight.bold),)
+
+      ),
+    );
+  }
+  
+  }
+ 
+class Women extends StatelessWidget {
+Women({this.username});
+final String username;
+  @override
+  Widget build(BuildContext context) {
+   
+       return MaterialApp( 
+      home: Scaffold(
+      //new Text("Welcome Mens Section",textDirection: TextDirection.ltr, style: new TextStyle(fontSize: 18.0,fontWeight: FontWeight.bold),),
+           body: Container(
+                 padding: const EdgeInsets.all(20.0),
+ child: new SingleChildScrollView(
+      child:new Column(
+       mainAxisSize: MainAxisSize.max,
+       mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                  Text('Hai $username', style: TextStyle(fontSize: 20.0),),
+                    
+                  Text("Welcome to Womens section",textDirection: TextDirection.ltr, style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold,
+                                 color: Colors.black,),), 
+            //  Image.asset("asset/men1.jpg", ),
+               SizedBox(
+                  height: 20.0,
+                ),
+                            //  Image.asset("asset/men2.jpg", ),
+       RaisedButton(
+                     
+                     shape: BeveledRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                  ),
+            child: Text("Logout"),
+            color: Colors.blueAccent,
+            onPressed: (){
+              Navigator.pushReplacementNamed(context,'/MyHomePage');
+            },
+          ),    
+              ],
+             
+      
+      ),
+    
+       ),
+       
+       ),
+	   
+       // ),
+      ),
+    );
+  }
+  
+  }
+ 
+class Kids extends StatelessWidget {
+  Kids({this.username});
+final String username;
+  @override
+  Widget build(BuildContext context) {
+   
+       return MaterialApp( 
+      home: Scaffold(
+     // new Text("Welcome Kids Section",textDirection: TextDirection.ltr, style: new TextStyle(fontSize: 18.0,fontWeight: FontWeight.bold),),
+          body: Container(
+                 padding: const EdgeInsets.all(20.0),
+ child: new SingleChildScrollView(
+      child:new Column(
+       mainAxisSize: MainAxisSize.max,
+       mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                     Text('Hai $username', style: TextStyle(fontSize: 20.0),),
+                  Text("Welcome to Kids section",textDirection: TextDirection.ltr, style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold,
+                                 color: Colors.black,),), 
+            //  Image.asset("asset/men1.jpg", ),
+               SizedBox(
+                  height: 20.0,
+                ),
+                            //  Image.asset("asset/men2.jpg", ),
+       RaisedButton(
+                     
+                     shape: BeveledRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                  ),
+            child: Text("Logout"),
+            color: Colors.blueAccent,
+            onPressed: (){
+              Navigator.pushReplacementNamed(context,'/MyHomePage');
+            },
+          ),    
+              ],
+             
+      
+      ),
+    
+       ),
+       ),
+	   
+      ),
+    );
+  }
+  
+  }
+
+ 
+ 
+      class _FirstpageState extends State<Firstpage>{
+         int currentIndex=1;
+
+    getCurrentFragment(){
+    switch (currentIndex) {
+      case 1:
+      //return Fpage();
+      break;
+      case 2:
+      return Men();
+      break;
+      case 3:
+      return Women();
+      break;
+      case 4:
+      return Kids();
+      break;
+    }  
+  }
+  setCurrentIndex(int index){
+    setState(() {
+      currentIndex=index;
+    });
+    Navigator.of(context).pop();
+  }
+  @override
+  Widget build(BuildContext context) {
+      return Scaffold(
+          drawer: Drawer(
+        child:Column(
+          children: <Widget>[
+            Container(
+             padding: EdgeInsets.only(top: 40.0,left: 10.0),
+              width:double.infinity,
+              height:250.0,
+              color: Colors.deepPurple[200],
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[                   
+                  Icon
+                  (
+                     Icons.account_circle,
+                      size:70.0,
+                      color: Colors.white,
+
+                  ),
+                  SizedBox(
+
+                    height: 40.0,
+                  ),
+                  Text("admin", 
+                  style: TextStyle(color:Colors.white, fontSize: 15.0, ),),
+                   Text("admin123@gmail.com", 
+                   style: TextStyle(color:Colors.white54, fontSize: 10.0, ),)
+                  
+                  ],
+                 
+              ),
+            ),
+            ListTile(
+              
+              selected: setCurrentIndex ==1 ? true:false,
+              onTap: (){
+                 setCurrentIndex(1);
+              },
+              leading: Icon(Icons.ac_unit),
+              title: Text('Homepage'),
+            ),
+            ListTile(
+                selected: setCurrentIndex ==2 ? true:false,
+                    onTap: (){
+                      setCurrentIndex(2);
+                    },
+               leading: Icon(Icons.ac_unit),
+              title: Text('Mens Section'),
+            ),
+            ListTile(
+              selected: setCurrentIndex ==3 ? true:false,
+                    onTap: (){ 
+                      setCurrentIndex(3);
+                      },
+               leading: Icon(Icons.ac_unit),
+              title: Text('Womens Section'),
+            ),
+ListTile(
+              
+              selected: setCurrentIndex ==4 ? true:false,
+              onTap: (){
+                 setCurrentIndex(4);
+              },
+              leading: Icon(Icons.ac_unit),
+              title: Text('Kids Section'),
+            ),
+          ],
+        )
+        
+      ),
+      resizeToAvoidBottomPadding: false,
+      
+     // appBar: AppBar(
+
+             //   title: Text('Hallo $username', style: TextStyle(fontSize: 20.0),)), 
+       body: getCurrentFragment() 
+      
+          //Text('Hallo $username', style: TextStyle(fontSize: 20.0),),
+      );
+  }
+  
+
+      }

@@ -1,0 +1,417 @@
+
+import 'dart:convert'; 
+import 'package:ecart_client1/cart.dart';
+import 'package:ecart_client1/categories.dart';
+import 'package:ecart_client1/finalpayment.dart';
+import 'package:ecart_client1/main1.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'orderproduct.dart';
+import 'cart.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:meta/meta.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter/services.dart';
+ 
+  void main() {
+    runApp(new MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: new Fpage(),
+    ));
+  }
+  class Fpage extends StatefulWidget {
+  final List list;
+  String username;
+    final int index;
+      Fpage({this.username,this.list,this.index});
+
+  @override
+  _FpageState createState() => new _FpageState();
+  
+
+  }
+
+NotificationDetails get _noSound {
+  final androidChannelSpecifics = AndroidNotificationDetails(
+    'silent channel id',
+    'silent channel name',
+    'silent channel description',
+    playSound: false,
+  );
+  final iOSChannelSpecifics = IOSNotificationDetails(presentSound: false);
+
+  return NotificationDetails(androidChannelSpecifics, iOSChannelSpecifics);
+}
+/* async {
+                      await _showDailyAtTime();
+                    }, */
+Future showSilentNotification(
+    FlutterLocalNotificationsPlugin notifications, {
+      @required String title,
+      @required String body,
+      int id = 0,
+    }) =>
+    _showNotification(notifications,
+        title: title, body: body, id: id, type: _noSound);
+
+NotificationDetails get _ongoing {
+  final androidChannelSpecifics = AndroidNotificationDetails(
+    'your channel id',
+    'your channel name',
+    'your channel description',
+    importance: Importance.Max,
+    priority: Priority.High,
+    ongoing: true,
+    autoCancel: false,
+  );
+  final iOSChannelSpecifics = IOSNotificationDetails();
+  return NotificationDetails(androidChannelSpecifics, iOSChannelSpecifics);
+}
+
+Future showOngoingNotification(
+  FlutterLocalNotificationsPlugin notifications, {
+  @required String title,
+  @required String body,
+  int id = 0,
+}) =>
+    _showNotification(notifications,
+        title: title, body: body, id: id, type: _ongoing);
+
+Future _showNotification(
+  FlutterLocalNotificationsPlugin notifications, {
+  @required String title,
+  @required String body,
+  @required NotificationDetails type,
+  int id = 0,
+}) =>
+    notifications.show(id, title, body, type);
+
+  
+  class _FpageState extends  State<Fpage> {
+  
+      List data=[];
+      Future<String> dispProduct() async {
+        print('Inside dispProduct');
+        await Future.delayed(Duration(seconds: 0));
+        final response =
+        //fluttertest.000webhostapp.com
+          await http.get( "http://fluttertest.000webhostapp.com/edisp_pimg.php",
+        //   await http.get( "http://192.168.122.1/ecart/disp_pimg.php",
+            //"user_name" : username
+            );
+        
+          this.setState(() {
+        data = json.decode(response.body);
+      });
+      //print(data[1]["img_name"]);
+          return "Success!";  
+      }  
+
+      String _toTwoDigitString(int value) {
+    return value.toString().padLeft(2, '0');
+  }
+
+  final notifications = FlutterLocalNotificationsPlugin();
+ Future<void> _showDailyAtTime() async {
+    var time = Time(10, 0, 0);
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'repeatDailyAtTime channel id',
+        'repeatDailyAtTime channel name',
+        'repeatDailyAtTime description');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await notifications.showDailyAtTime(
+        0,
+        'show daily title',
+        'Daily notification shown at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
+        time,
+        platformChannelSpecifics);
+  }
+Future showOngoingNotification(
+  FlutterLocalNotificationsPlugin notifications, {
+  @required String title,
+  @required String body,
+  int id = 0,
+}) =>
+    _showNotification(notifications,
+        title: title, body: body, id: id, type: _ongoing);
+
+Future _showNotification(
+  FlutterLocalNotificationsPlugin notifications, {
+  @required String title,
+  @required String body,
+  @required NotificationDetails type,
+  int id = 0,
+}) =>
+    notifications.show(id, title, body, type);
+    @override
+    void initState() {   
+
+      this.dispProduct();
+      super.initState();
+    
+    final settingsAndroid = AndroidInitializationSettings('app_icon');
+    final settingsIOS = IOSInitializationSettings(
+        onDidReceiveLocalNotification: (id, title, body, payload) =>
+            onSelectNotification(payload));
+
+    notifications.initialize(
+        InitializationSettings(settingsAndroid, settingsIOS),
+        onSelectNotification: onSelectNotification);
+     this.showOngoingNotification(notifications,title: 'hai $username', body: 'welcome to Freshgoods');
+
+  }
+
+  Future onSelectNotification(String payload) async => await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Cart()),
+      );
+
+    Widget build(BuildContext context) {
+    
+              return Scaffold(
+                  appBar: new AppBar(
+                    elevation: 0.1,
+                backgroundColor: Colors.red,
+                title: Text('FreshGoods'),
+                actions: <Widget>[
+                  Stack(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: InkResponse(
+                      
+                          child: Icon(Icons.add_shopping_cart),
+                            //color: Colors.black,
+                            onTap:(){
+                                  //load_cart();
+                      Navigator.of(context).push(new MaterialPageRoute(
+                          builder: (BuildContext context) => new Offer(
+                            //  list: data1,
+                            // index: index1,
+                          )));
+                
+                            },/*        onTap: () => Navigator.of(context).push(new MaterialPageRoute(
+                                        builder: (BuildContext context) => new ProductDisp(
+                                              list: data,
+                                              index: index,
+                                            ))), */
+                                      
+                                    ),
+                                  ),
+                                
+                                ],
+                              )
+                            ],
+                          
+                            
+                          ),
+                          drawer: new Drawer(
+                            child: new ListView(
+                              children: <Widget>[
+                    //            header
+                                new UserAccountsDrawerHeader(
+                                    accountName: Text('Admin'),
+                                    accountEmail: Text('Admin@gmail.com'),
+                                    //  accountEmail: Text("hai:+${username}"),
+                                currentAccountPicture: GestureDetector(
+                                  child: new CircleAvatar(
+                                    backgroundColor: Colors.grey,
+                                    child: Icon(Icons.person, color: Colors.white,),
+                                  ),
+                                ),
+                                decoration: new BoxDecoration(
+                                  color: Colors.red
+                                ),
+                                ),
+                    
+                              InkWell(
+                                onTap: (){
+                                    Navigator.of(context).push(new MaterialPageRoute(
+                          builder: (BuildContext context) => new Fpage(
+                            //  list: data1,
+                            // index: index1,
+                          )));
+
+                                },
+                                
+                                child: ListTile(
+                                  title: Text('Home Page'),
+                                  leading: Icon(Icons.home),
+                                ),
+                              ),
+                    
+                                InkWell(
+                                  onTap: (){},
+                                  child: ListTile(
+                                    title: Text('My account'),
+                                    leading: Icon(Icons.person),
+                                  ),
+                                ),
+                    
+                                InkWell(
+                                  onTap: (){
+                                    Navigator.of(context).push(new MaterialPageRoute(
+                          builder: (BuildContext context) => new Cartupdate(
+                            //  list: data1,
+                            // index: index1,
+                          )));
+                                  },
+                                  child: ListTile(
+                                    title: Text('My Orders'),
+                                    leading: Icon(Icons.shopping_basket),
+                                  ),
+                                ),
+                    
+                                InkWell(
+                                
+                                            onTap: () => Navigator.of(context).push(new MaterialPageRoute(
+                                        builder: (BuildContext context) => new  Categories(
+                                              //list: data,
+                                            // index: index,
+                                            ))),
+                                  child: ListTile(
+                                    title: Text('Categories'),
+                                    leading: Icon(Icons.dashboard),
+                                  ),
+                                ),
+                    
+                                InkWell(
+                                  onTap: (){
+                                  Navigator.pushReplacementNamed(context,'/MyHomePage');
+
+                                  },
+                
+                                  child: ListTile(
+                                    title: Text('Logout'),
+                                    leading: Icon(Icons.lock_open),
+                                  ),
+                                ),
+                    
+                                Divider(),
+                    
+                                InkWell(
+                                  onTap: (){},
+                                  child: ListTile(
+                                    title: Text('Settings'),
+                                    leading: Icon(Icons.settings, color: Colors.blue,),
+                                  ),
+                                ),
+                    
+                                InkWell(
+                                  onTap: (){},
+                                  child: ListTile(
+                                    title: Text('About'),
+                                    leading: Icon(Icons.help, color: Colors.green),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            ),
+                    
+                            resizeToAvoidBottomPadding: false ,
+                              body: /*Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: FutureBuilder<List>(
+                              
+                                future: dispProduct(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) print(snapshot.error);
+                    
+                                  return snapshot.hasData
+                                      ? new Fpage(
+                                          list: snapshot.data,
+                                        )
+                                      : new Center(
+                                          child: new CircularProgressIndicator(),
+                                        );
+                                },
+                                    
+                                    
+                              
+                              ),
+                            ),*/
+
+                                  new GridView.builder(
+                                      shrinkWrap: true,                
+                                      scrollDirection: Axis.vertical,
+                                    itemCount: data.length,
+                                      gridDelegate:
+                                          new SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2),
+                                      itemBuilder: (BuildContext context, int index) {
+                                        return new GestureDetector(
+                                          child: new Container(
+                                                    // width: MediaQuery.of(context).size.width - 100.0,
+                                        decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(10.0),
+                                                // shape: BoxShape.circle,
+                                            ),
+                                            
+                                            child: new Card(
+                                                  color: Colors.white,
+                         
+
+                                          
+                                              child: new Container(
+                       
+                                              
+                                      
+                                                  child: new Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: <Widget>[
+
+                                                      /*CircleAvatar(
+                                                      //  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                                  maxRadius: 70.0,
+                                  //foregroundColor: Colors.transparent,
+                                  //minRadius: 50.0,
+                                  backgroundImage:
+                                  NetworkImage("http://fluttertest.000webhostapp.com/upload/${data[index]["img_name"]}"),
+                                //NetworkImage("http://192.168.122.1/ecart/upload/${widget.list[i]['img_name']}"),
+                                  backgroundColor: Colors.transparent,
+                                                      ),*/
+                          Image.network('http://fluttertest.000webhostapp.com/upload/${data[index]["img_name"]}',width: 150.0,height: 100.0,
+                            alignment: Alignment.center,fit: BoxFit.fitWidth),
+                                  SizedBox(
+                                    width: 20.0,height: 15.0),                              
+                                                              
+                                                    new Container(
+
+                                                    
+                                                    child: Text("${data[index]['product_name']}",  
+                                            style:new TextStyle(fontSize: 20.0,color:Colors.redAccent, fontWeight: FontWeight.bold,),), 
+                                          // Theme.of(context).textTheme.headline)
+                                                  ),],) 
+                                        
+                                                
+                                            
+                                            // new TextStyle(fontSize: 20.0,color:Colors.redAccent, fontWeight: FontWeight.bold,),),
+                                    
+                                          //Sizedbox()
+                    //  backgroundColor: Colors.black
+                                              ),
+                                    
+                                                
+                                            ),
+                                            
+                                            
+                                          ),
+                                          
+                                            onTap: () => Navigator.of(context).push(new MaterialPageRoute(
+                                        builder: (BuildContext context) => new ProductDisp(
+                                              list: data,
+                                              index: index,
+                                            ))),
+                                            );
+                                      },
+                                    ),
+                                    
+                                  
+                          );
+              
+                                }
+                    }
+                    
